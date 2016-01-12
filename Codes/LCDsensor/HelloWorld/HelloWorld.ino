@@ -64,7 +64,7 @@ void loop()
     lcd.home ();
     while (Serial.available() > 0) 
     {
-      Serial.println("Got your info. working");
+      Serial.println("stuff is available, going to read");
       // display each character to the LCD
       // read the incoming byte:
       incomingByte = Serial.read();
