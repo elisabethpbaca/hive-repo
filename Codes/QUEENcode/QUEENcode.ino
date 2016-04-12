@@ -27,6 +27,7 @@
     int lightSensorValueB;
     bool waterB;
     int beeName;
+    int soilA;
 };
 
   typedef struct dataStruct SensorData;
@@ -82,6 +83,22 @@ void loop() {
       Serial.println(myData.lightSensorValueA);
       Serial.print(F(" Water Sensor: "));
       Serial.println(myData.waterA);
+      Serial.print(F(" Soil Sensor: "));
+      Serial.print(myData.soilA);
+    
+      if(myData.soilA<300) {
+        Serial.println("Dry soil");
+      }
+      else if((myData.soilA>300)&&(myData.soilA<600)) {
+        Serial.println("Humid soil");
+      }
+      else if((myData.soilA>600)&&(myData.soilA<950)){
+        Serial.println( "water");
+      }
+      else{
+        Serial.println ( "ERROR");
+      }
+      
    }
    else {
    

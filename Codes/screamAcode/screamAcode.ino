@@ -1,13 +1,4 @@
 
-/*
-* Getting Started example sketch for nRF24L01+ radios
-* This is an example of how to send data from one node to another using data structures
-* Updated: Dec 2014 by TMRh20
-*/
-
-
-//scream A
-
 
 //lightstart
 int lightPin = A1; // select the input pin for the potentiometer
@@ -38,11 +29,7 @@ RF24 radio(9,10);
 // Used to control whether this node is sending or receiving
 bool role = 1;
 
-/**
-* Create a data structure for transmitting and receiving data
-* This allows many variables to be easily sent and received in a single transmission
-* See http://www.cplusplus.com/doc/tutorial/structures/
-*/
+
 struct dataStruct{
   unsigned long _micros;
   int lightSensorValueA;
@@ -50,6 +37,7 @@ struct dataStruct{
   int lightSensorValueB;
   bool waterB;
   int beeName;
+  int soilA;
 };
 
   typedef struct dataStruct SensorData;
@@ -99,16 +87,27 @@ void loop() {
     myData.waterA = false;
   }
  
-      //water end
-
-
+//water end
+// light code
   
   myData.lightSensorValueA =  analogRead(lightPin); 
+
+  // end light code 
+  //soil
+  
+int soil_moisture=analogRead(A3);  // read from analog pin A3
+
+//Serial.print(soil_moisture);
+//Serial.print("analog value: ");
+
+
+myData.soilA = soil_moisture;
+
+//soil end
   
   myData.waterB = false;
   myData.lightSensorValueB = 0;
-  myData.beeName =1;
-  // end sensor code 
+  myData.beeName =1;  
   
 
 /****************** Ping Out Role ***************************/  
@@ -124,8 +123,8 @@ if (role == 1)  {
     myData._micros = micros();
      if (!radio.write( &myData, sizeof(myData) )){
        Serial.println(F("failed due to write"));
-       Serial.println("beename");
-       Serial.print (myData.beeName);
+       Serial.print("beename:");
+       Serial.println(myData.beeName);
      }
     // Serial.print(F("Size of myData: "));
    //  Serial.println(sizeof(myData));
@@ -141,25 +140,16 @@ if (role == 1)  {
           break;
       }      
     }
-        
-  //  if ( timeout ){                                             // Describe the results
-   //     Serial.println(F("Failed, response timed out."));
-   // }else{
-                                                                // Grab the response, compare, and send to debugging spew
-     //   radio.read( &myData, sizeof(myData) );
-     //   unsigned long time = micros();
+
         
         // Spew it
-      //  Serial.print(F("Sent at: "));
-      //  Serial.print(time);
-       // Serial.print(F(", Got response myData._micros: "));
-     //   Serial.print(myData._micros);
-     //   Serial.print(F("\n Round-trip delay time-myData._micros: "));
-     //   Serial.print(time-myData._micros);
+ 
         Serial.print(F("lightsensorValueA: "));
         Serial.println(myData.lightSensorValueA);
         Serial.print(F("Water SensorA: "));
         Serial.println(myData.waterA);
+        Serial.print(F("soil sensor A:"));
+        Serial.println(myData.soilA); 
         //Serial.print(F(", Size of myData: "));
         //Serial.println(sizeof(myData));
     //}
