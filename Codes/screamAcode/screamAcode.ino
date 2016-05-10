@@ -2,9 +2,9 @@
 
 //lightstart
 int lightPin = A1; // select the input pin for the potentiometer
-//int ledPin = 13; // select the pin for the LED
 // Min 0
 // Max 1024
+//300 is dark and 900 is bright room 
 //lightend
 
 //water begin
@@ -30,14 +30,13 @@ RF24 radio(9,10);
 bool role = 1;
 
 
-struct dataStruct{
-  unsigned long _micros;
-  int lightSensorValueA;
-  bool waterA;
-  int lightSensorValueB;
-  bool waterB;
-  int beeName;
-  int soilA;
+  struct dataStruct{
+    unsigned long _micros;
+    int lightSensorValue;
+    bool water;
+    int beeName;
+    int soil;
+    int sound;
 };
 
   typedef struct dataStruct SensorData;
@@ -82,34 +81,23 @@ void loop() {
   //water start
   if(digitalRead(WATER_SENSOR) == HIGH)
   {
-    myData.waterA = true;
+    myData.water = true;
   } else {
-    myData.waterA = false;
+    myData.water = false;
   }
  
 //water end
 // light code
   
-  myData.lightSensorValueA =  analogRead(lightPin); 
-
-  // end light code 
+  myData.lightSensorValue =  analogRead(lightPin); 
+ // end light code 
+  
   //soil
-  
 int soil_moisture=analogRead(A3);  // read from analog pin A3
-
-//Serial.print(soil_moisture);
-//Serial.print("analog value: ");
-
-
-myData.soilA = soil_moisture;
-
+myData.soil = soil_moisture;
 //soil end
-  
-  myData.waterB = false;
-  myData.lightSensorValueB = 0;
   myData.beeName =1;  
   
-
 /****************** Ping Out Role ***************************/  
 if (role == 1)  {
     
@@ -117,10 +105,7 @@ if (role == 1)  {
     
     
     Serial.println(F("Now sending"));
-  //  Serial.print("myData.sensorValue: ");
-  //  Serial.println(myData.sensorValue);
-
-    myData._micros = micros();
+  myData._micros = micros();
      if (!radio.write( &myData, sizeof(myData) )){
        Serial.println(F("failed due to write"));
        Serial.print("beename:");
@@ -144,12 +129,12 @@ if (role == 1)  {
         
         // Spew it
  
-        Serial.print(F("lightsensorValueA: "));
-        Serial.println(myData.lightSensorValueA);
-        Serial.print(F("Water SensorA: "));
-        Serial.println(myData.waterA);
-        Serial.print(F("soil sensor A:"));
-        Serial.println(myData.soilA); 
+        Serial.print(F("lightsensorValue: "));
+        Serial.println(myData.lightSensorValue);
+        Serial.print(F("Water Sensor: "));
+        Serial.println(myData.water);
+        Serial.print(F("soil sensor :"));
+        Serial.println(myData.soil); 
         //Serial.print(F(", Size of myData: "));
         //Serial.println(sizeof(myData));
     //}
